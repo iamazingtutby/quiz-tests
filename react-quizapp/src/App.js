@@ -9,7 +9,6 @@ import QuizList from './containers/QuizList/QuizList'
 class App extends Component {
 
   render() {
-      console.log('uyuy');
     return (
         <Layout>
             <Switch>
