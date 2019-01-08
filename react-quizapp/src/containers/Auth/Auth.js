@@ -2,10 +2,12 @@ import React from 'react'
 import classes from './Auth.module.scss'
 import Button from '../../components/UI/Button/Button'
 import Input from '../../components/UI/Input/Input'
+import is from 'is_js'
 
 export default class Auth extends React.Component {
 
     state = {
+        isFormValid: false,
         formControls: {
             email: {
                 value: '',
@@ -58,8 +60,7 @@ export default class Auth extends React.Component {
         }
 
         if(validation.email){
-            // get validate func from google
-            isValid = false;
+            isValid = is.email(value) && isValid;
         }
 
         if(validation.minLength){
@@ -81,8 +82,15 @@ export default class Auth extends React.Component {
     
         formControls[controlName] = control;
 
+        let isFormValid = true
+
+        Object.keys(formControls).forEach(name => {
+            isFormValid = formControls[name].valid && isFormValid
+        })
+
         this.setState({
-            formControls: formControls
+            formControls: formControls,
+            isFormValid: isFormValid
         })
     }
 
@@ -123,6 +131,7 @@ export default class Auth extends React.Component {
                         <Button
                         type="success"
                         onClick={this.loginHandler}
+                        disabled={!this.state.isFormValid}
                         >
                             Login
                         </Button>
@@ -130,6 +139,7 @@ export default class Auth extends React.Component {
                         <Button
                         type="primary"
                         onClick={this.registerHandler}
+                        disabled={!this.state.isFormValid}
                         >
                             Registration
                         </Button>
