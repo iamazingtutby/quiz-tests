@@ -2,26 +2,50 @@ import React from 'react';
 import classes from './QuizList.module.scss'
 import {NavLink} from 'react-router-dom'
 import axios from 'axios'
+import Loader from '../../components/UI/Loader/Loader'
 
 export default class QuizList extends React.Component {
 
+    state = {
+        quizes: [],
+        loading: true
+    }
+
     quizRender = () => {
-        return [1,2,3].map((quiz, index) => {
+        return this.state.quizes.map((quiz) => {
             return (
-                <li key={index}>
+                <li key={quiz.id}>
                     <NavLink
-                        to={'/quiz/' + quiz}>
-                        Тест номер {quiz}
+                        to={'/quiz/' + quiz.id}>
+                        {quiz.name}
                     </NavLink>
                 </li>
             )
         })
     }
 
-    componentDidMount() {
-        axios.get('https://react-quizapp-e37ee.firebaseio.com/quiz.json').then(response => {
-            console.log('resp', response)
-        })
+    async componentDidMount() {
+        try{
+            const response = await axios.get('https://react-quizapp-e37ee.firebaseio.com/quizes.json')
+            const quizes = []
+            Object.keys(response.data).forEach((key, index) => {
+                quizes.push({
+                    id: key,
+                    name: `Test ${index + 1}`
+                })
+            })
+
+            this.setState({
+                quizes: quizes,
+                loading: false
+            })
+
+            console.log(this.state.quizes)
+
+        } catch (e) {
+            console.log(e)
+        }
+
     }
 
     render() {
@@ -32,7 +56,7 @@ export default class QuizList extends React.Component {
                         Список тестов
                     </h1>
                     <ul>
-                        {this.quizRender()}
+                        { this.state.loading ? <Loader /> : this.quizRender() }
                     </ul>
                 </div>
         	</div>
